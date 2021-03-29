@@ -17,6 +17,7 @@ func main() {
 	//post handler requires the logger, pass it in
 	ph := handlers.NewProduct(l)
 
+	log.Println("Server running on port 9090")
 	//Create a new server mux
 	sm := http.NewServeMux()
 	//handle / of server to product handler
@@ -37,7 +38,6 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println("Server running on port 9090")
 	}()
 
 	//Make signal chan
