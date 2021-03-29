@@ -52,6 +52,35 @@ func (p *Products) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		p.updateProducts(id, rw, r)
 		return
 	}
+
+	// Delete Request
+	if r.Method == http.MethodDelete {
+
+		//Expect id in URI
+		reg := regexp.MustCompile(`/([0-9]+)`)
+		g := reg.FindAllStringSubmatch(r.URL.Path, -1)
+
+		if len(g) != 1 {
+			http.Error(rw, "Invalid URI 2", http.StatusBadRequest)
+			return
+		}
+
+		if len(g[0]) != 2 {
+			http.Error(rw, "Invalid URI", http.StatusBadRequest)
+			return
+		}
+
+		idString := g[0][1]
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			http.Error(rw, "Bad", http.StatusBadRequest)
+			return
+		}
+		p.l.Println("got id", id)
+
+		p.deleteProduct(id, rw, r)
+		return
+	}
 	//catch all
 	rw.WriteHeader(http.StatusMethodNotAllowed)
 
@@ -92,6 +121,17 @@ func (p Products) updateProducts(id int, rw http.ResponseWriter, r *http.Request
 	err = data.UpdateProducts(id, prod)
 	if err != nil {
 		http.Error(rw, "Product not found", http.StatusNotFound)
+		return
+	}
+
+}
+
+func (p Products) deleteProduct(id int, rw http.ResponseWriter, r *http.Request) {
+	p.l.Println("Delete request handle")
+
+	err := data.DeleteProducts(id)
+	if err != nil {
+		http.Error(rw, "Can't delete", http.StatusBadRequest)
 		return
 	}
 
