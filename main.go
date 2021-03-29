@@ -37,6 +37,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		log.Println("Server running on port 9090")
 	}()
 
 	//Make signal chan
