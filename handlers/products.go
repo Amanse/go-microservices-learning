@@ -54,10 +54,18 @@ func (p Products) UpdateProducts(rw http.ResponseWriter, r *http.Request) {
 
 }
 
-func (p Products) DeleteProduct(id int, rw http.ResponseWriter, r *http.Request) {
+func (p Products) DeleteProduct(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+
+	if err != nil {
+		p.l.Println("Error:", err)
+		return
+	}
+
 	p.l.Println("Delete request handle")
 
-	err := data.DeleteProducts(id)
+	err = data.DeleteProducts(id)
 	if err != nil {
 		http.Error(rw, "Can't delete", http.StatusBadRequest)
 		return

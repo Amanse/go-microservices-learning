@@ -35,7 +35,8 @@ func main() {
 
 	// ------- MY CODE HERE BEWARE --------
 
-	// Add delete Router and delete route here
+	deleteRouter := sm.Methods(http.MethodDelete).Subrouter()
+	deleteRouter.HandleFunc("/{id:[0-9]+}", ph.DeleteProduct)
 
 	// ------- MY CODE ENDS ---------------
 	//handle / of server to product handler
