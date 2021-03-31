@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/Amanse/server/handlers"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
@@ -19,9 +20,26 @@ func main() {
 
 	log.Println("Server running on port 9090")
 	//Create a new server mux
-	sm := http.NewServeMux()
+	sm := mux.NewRouter()
+
+	getRouter := sm.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/", ph.GetProducts)
+
+	putRouter := sm.Methods(http.MethodPut).Subrouter()
+	putRouter.HandleFunc("/{id:[0-9]+}", ph.UpdateProducts)
+	putRouter.Use(ph.MiddleWareProductValidation)
+
+	postRouter := sm.Methods(http.MethodPost).Subrouter()
+	postRouter.HandleFunc("/", ph.AddProduct)
+	postRouter.Use(ph.MiddleWareProductValidation)
+
+	// ------- MY CODE HERE BEWARE --------
+
+	// Add delete Router and delete route here
+
+	// ------- MY CODE ENDS ---------------
 	//handle / of server to product handler
-	sm.Handle("/", ph)
+	//sm.Handle("/products", ph)
 
 	//Add server parameters and also time out
 	s := &http.Server{
