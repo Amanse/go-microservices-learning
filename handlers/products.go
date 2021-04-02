@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"context"
-	"github.com/Amanse/server/data"
-	"github.com/gorilla/mux"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/Amanse/server/data"
+	"github.com/gorilla/mux"
 )
 
 type Products struct {
@@ -82,6 +84,13 @@ func (p Products) MiddleWareProductValidation(next http.Handler) http.Handler {
 		err := prod.FromJson(r.Body)
 		if err != nil {
 			http.Error(rw, "No json marhsal", http.StatusBadRequest)
+			return
+		}
+
+		//validate the product
+		err = prod.Validate()
+		if err != nil {
+			http.Error(rw, fmt.Sprintf("Error validating: %s", err), http.StatusBadRequest)
 			return
 		}
 
